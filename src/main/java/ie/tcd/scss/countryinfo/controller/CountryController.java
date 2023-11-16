@@ -66,8 +66,11 @@ public class CountryController {
      */
     @GetMapping("/{countryname}/map")
     public ResponseEntity<String> getCountryMap(@PathVariable String countryname) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        String countryMap = countryService.getMapForCountry(countryname);
+        if (countryMap == null || countryMap.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(String.join(", ", countryMap));
     }
 
     /**
