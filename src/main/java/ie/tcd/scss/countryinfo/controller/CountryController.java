@@ -81,8 +81,11 @@ public class CountryController {
      */
     @GetMapping("/{countryname}/continents")
     public ResponseEntity<String> getCountryContinents(@PathVariable String countryname) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<String> continents = countryService.getContinentsForCountry(countryname);
+        if (continents == null || continents.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(String.join(", ", continents));
     }
 
 
