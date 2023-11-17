@@ -116,8 +116,11 @@ public class CountryController {
      */
     @GetMapping("/{substring}/mostPopulousWithPopulation")
     public ResponseEntity<String> getMostPopulousCountriesWithPopulation(@PathVariable String substring) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<String> countriesWithPopulation = countryService.getMostPopulousCountriesWithPopulation(substring);
+         if (countriesWithPopulation == null || countriesWithPopulation.isEmpty()) {
+             return ResponseEntity.notFound().build();
+         }
+         return ResponseEntity.ok(String.join(", ", countriesWithPopulation));
     }
 
     /**
