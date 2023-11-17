@@ -42,8 +42,23 @@ public class CountryService {
     }
 
     public String getMapForCountry(String countryName) {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not implemented yet");
+        Country[] countries = restTemplate.getForObject(API_URL_ALL, Country[].class);
+        if (countries != null) {
+            List<String> countriesList= Stream.of(countries) // convert to Stream
+                    .filter(c -> c.getName().getCommon().toLowerCase().contains(substring.toLowerCase())) // filter by substring, case-insensitive
+                    .sorted(Comparator.comparingInt(Country::getPopulation).reversed()) // sort by population, descending
+                    .map(c -> c.getName().getCommon()) // map country to country name
+                    .collect(Collectors.toList()); //
+            
+            List<String> countriesWithPopulation = new ArrayList<String>();
+            for (int i = 0; i < countriesList.size(); i++) {
+            	 
+            	countriesWithPopulation.add(countriesList.get(i)+" ("+getCountryInfo(countriesList.get(i)).getPopulation() +")");
+            }
+            return countriesWithPopulation;
+            
+        }
+        return List.of(); // return empty list if no countries found
     }
 
     public List<String> getContinentsForCountry(String countryName) {
@@ -148,6 +163,12 @@ public class CountryService {
         if (country == null) {
             return null;
         }
+        
+        Map<String,Translation> countryTranslation = country.getTranslations();
+        if (countryTranslation.get(language)==null) {
+        	return null;	
+        }
+        return countryTranslation.get(language).getCommon();
 
         // TODO: Implement the lookup of the translation for the given language
         // The country object contains data that corresponds to JSON that looks like below. Each 4 lines with a language code and official/common name is a
@@ -170,7 +191,6 @@ public class CountryService {
         // translation for the given language and handle the case that the requested language is not available.
         // Each Translation then has a "common" name, which you shuold return.
 
-        throw new UnsupportedOperationException("Not implemented yet");
         // return ...
     }
 }
